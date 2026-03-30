@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/my_layout_tuananh.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_application_1/regitter.dart'; // ✅ thêm Dio
+import 'package:flutter_application_1/regitter.dart';
 
 class Mylogin extends StatefulWidget {
   const Mylogin({super.key});
@@ -11,16 +11,17 @@ class Mylogin extends StatefulWidget {
 }
 
 class _MyloginState extends State<Mylogin> {
+  // Tạo một "chìa khóa" để quản lý và kiểm tra lỗi
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
+  // Hàm xử lý logic đăng nhập
   Future<void> login() async {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      final dio = Dio(); // ✅ tạo Dio
+      final dio = Dio(); //tạo Dio
 
       final response = await dio.post(
         'https://dummyjson.com/auth/login',
@@ -31,7 +32,7 @@ class _MyloginState extends State<Mylogin> {
       );
 
       if (response.statusCode == 200) {
-        final result = response.data; // ✅ dữ liệu user + token
+        final result = response.data; // dữ liệu user + token
 
         Navigator.push(
           context,
@@ -102,7 +103,7 @@ class _MyloginState extends State<Mylogin> {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: login, // ✅ gọi Dio
+                      onPressed: login, //
                       icon: Icon(Icons.login),
                       label: Text('ĐĂNG NHẬP'),
                       style: ElevatedButton.styleFrom(

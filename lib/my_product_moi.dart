@@ -11,39 +11,43 @@ class ProductApiPage extends StatefulWidget {
 }
 
 class _ProductApiPageState extends State<ProductApiPage> {
-  List products = [];
-  List cart = [];
+  List products = []; // Danh sách chứa các sản phẩm lấy từ API về
+  List cart = []; // Danh sách chứa các sản phẩm người dùng chọn mua (Giỏ hàng)
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    fetchProducts();
+    fetchProducts(); // Vừa mở máy lên là gọi API lấy hàng về
   }
 
-  // API
+  // Hàm gọi API lấy danh sách sản phẩm
   Future<void> fetchProducts() async {
     try {
       final dio = Dio();
+      // Gửi yêu cầu GET để lấy danh sách sản phẩm từ DummyJSON
       final response = await dio.get('https://dummyjson.com/products');
 
       if (response.statusCode == 200) {
         setState(() {
+          // Lấy mảng dữ liệu nằm trong key 'products'
           products = response.data['products'];
           isLoading = false;
         });
       }
     } catch (e) {
-      print("Lỗi API");
+      print("Lỗi API"); // In ra lỗi nếu không kết nối được
     }
   }
 
-  //  ADD TO CART
+  // Hàm thêm sản phẩm vào giỏ hàng
+  // ignore: strict_top_level_inference
   void addToCart(item) {
     setState(() {
-      cart.add(item);
+      cart.add(item); // Thêm món đồ được chọn vào mảng 'cart'
     });
 
+    // Hiện thông báo nhỏ xác nhận
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Đã thêm vào giỏ hàng')));
@@ -56,13 +60,15 @@ class _ProductApiPageState extends State<ProductApiPage> {
         title: const Text('DANH SÁCH SẢN PHẨM'),
         backgroundColor: Colors.amber,
 
-        //  GIỎ HÀNG
+        // Khu vực các nút chức năng trên thanh AppBar
         actions: [
           Stack(
+            // Dùng Stack để đè con số số lượng lên biểu tượng giỏ hàng
             children: [
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
                 onPressed: () {
+                  // Nhấn vào giỏ hàng thì chuyển sang màn hình CartPage
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -71,7 +77,7 @@ class _ProductApiPageState extends State<ProductApiPage> {
                   );
                 },
               ),
-
+              // Nếu có hàng trong giỏ thì mới hiện vòng tròn số lượng màu đỏ
               if (cart.isNotEmpty)
                 Positioned(
                   right: 5,
@@ -83,7 +89,7 @@ class _ProductApiPageState extends State<ProductApiPage> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      cart.length.toString(),
+                      cart.length.toString(), // Hiển thị số lượng món đồ
                       style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ),
@@ -97,16 +103,23 @@ class _ProductApiPageState extends State<ProductApiPage> {
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               children: List.generate(
-                products.length,
-                (index) =>
-                    item(products[index], context, addToCart, cart, index),
+                products
+                    .length, // Tạo ra số lượng dòng tương ứng với số sản phẩm
+                (index) => item(
+                  products[index],
+                  context,
+                  addToCart,
+                  cart,
+                  index,
+                ), // Gọi hàm vẽ từng dòng
               ),
             ),
     );
   }
 }
 
-//ITEM
+// Hàm Widget 'item' để vẽ từng dòng sản phẩm
+// ignore: strict_top_level_inference
 Widget item(product, context, Function addToCart, List cart, int index) {
   List<Color> colors = [
     const Color.fromARGB(255, 232, 195, 140),
@@ -114,7 +127,8 @@ Widget item(product, context, Function addToCart, List cart, int index) {
     const Color.fromARGB(255, 238, 149, 143),
     const Color.fromARGB(255, 132, 235, 225),
     const Color.fromARGB(255, 151, 225, 154),
-  ]; // chọn màu theo index
+  ];
+  // Lấy màu theo index bằng phép chia lấy dư (%)
   Color bgColor = colors[index % colors.length];
   return Container(
     height: 150,
@@ -125,7 +139,7 @@ Widget item(product, context, Function addToCart, List cart, int index) {
     ),
     child: Row(
       children: [
-        // 1. Hình ảnh sản phẩm
+        // 1. Hình ảnh sản phẩm (lấy từ link 'thumbnail' của API)
         Image.network(
           product['thumbnail'],
           width: 80,
@@ -141,14 +155,15 @@ Widget item(product, context, Function addToCart, List cart, int index) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                product['title'],
+                product['title'], // Tên sản phẩm
                 style: const TextStyle(fontWeight: FontWeight.bold),
-                maxLines: 2, // Tránh tên quá dài làm hỏng layout
+                maxLines: 2, // Quá 2 dòng thì ẩn bớt bằng dấu "..."
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 8),
               Text(
-                'Price: \$${product['price']}',
+                'Price: \$${product['price']}', // Giá tiền
+
                 style: const TextStyle(color: Colors.black87),
               ),
             ],
@@ -161,7 +176,8 @@ Widget item(product, context, Function addToCart, List cart, int index) {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: () => addToCart(product),
+                onPressed: () =>
+                    addToCart(product), // Gọi hàm thêm vào giỏ hàng
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
@@ -173,13 +189,15 @@ Widget item(product, context, Function addToCart, List cart, int index) {
               const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () {
+                  // Chuyển hướng sang trang chi tiết sản phẩm
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => ProductDetailPage(
-                        product: product,
-                        cart: cart,
-                        addToCart: addToCart,
+                        product: product, // Chuyền thông tin sản phẩm cụ thể
+                        cart: cart, // Chuyền giỏ hàng hiện tại
+                        addToCart:
+                            addToCart, // Chuyền cả hàm thêm vào giỏ để dùng ở trang chi tiết
                       ),
                     ),
                   );

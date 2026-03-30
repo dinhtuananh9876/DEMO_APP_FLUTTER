@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'gio_hang.dart';
 
 class ProductDetailPage extends StatelessWidget {
+  // Map: Dữ liệu của 1 sản phẩm cụ thể (tên, giá, ảnh...)
   final Map product;
 
-  // thêm
+  // List: Danh sách giỏ hàng hiện tại được truyền từ màn hình trước
   final List cart;
+  // Function: Hàm thêm vào giỏ hàng
   final Function addToCart;
 
   const ProductDetailPage({
@@ -88,6 +90,7 @@ class ProductDetailPage extends StatelessWidget {
             Row(
               children: [
                 // THÊM VÀO GIỎ
+                // Expanded: Giúp nút co giãn đều trong Row
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
@@ -111,7 +114,7 @@ class ProductDetailPage extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       addToCart(product);
-
+                      // Bước 2: Chuyển thẳng sang trang Giỏ hàng để thanh toán luôn
                       Navigator.push(
                         context,
                         MaterialPageRoute(

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 class CartPage extends StatelessWidget {
+  // Nhận danh sách các sản phẩm đã chọn từ màn hình trước truyền sang
   final List cart;
 
   const CartPage({super.key, required this.cart});
 
   @override
   Widget build(BuildContext context) {
-    double total = 0;
+    //  tính tổng tiền
+    double total = 0; // Khởi tạo biến tổng bằng 0
 
+    // Duyệt qua từng sản phẩm trong giỏ hàng để cộng dồn giá tiền
     for (var item in cart) {
       total += item['price'];
     }
@@ -33,13 +36,6 @@ class CartPage extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade400,
-                              blurRadius: 5,
-                              offset: const Offset(2, 2),
-                            ),
-                          ],
                         ),
                         child: Row(
                           children: [

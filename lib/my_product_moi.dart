@@ -106,80 +106,94 @@ class _ProductApiPageState extends State<ProductApiPage> {
   }
 }
 
-// ================= ITEM =================
+//ITEM
 Widget item(product, context, Function addToCart, List cart, int index) {
   List<Color> colors = [
     const Color.fromARGB(255, 232, 195, 140),
-    const Color.fromARGB(255, 106, 174, 230),
-    const Color.fromARGB(255, 220, 121, 114),
+    const Color.fromARGB(255, 122, 185, 237),
+    const Color.fromARGB(255, 238, 149, 143),
     const Color.fromARGB(255, 132, 235, 225),
     const Color.fromARGB(255, 151, 225, 154),
-  ];
-
-  // chọn màu theo index
+  ]; // chọn màu theo index
   Color bgColor = colors[index % colors.length];
   return Container(
-    height: 130,
+    height: 150,
     margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
     decoration: BoxDecoration(
       color: bgColor,
       borderRadius: BorderRadius.circular(20),
     ),
     child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Image.network(product['thumbnail'], width: 100, height: 100),
+        // 1. Hình ảnh sản phẩm
+        Image.network(
+          product['thumbnail'],
+          width: 80,
+          height: 80,
+          fit: BoxFit.cover,
+        ),
+        const SizedBox(width: 10),
 
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Name: ${product['title']}'),
-            const SizedBox(height: 20),
-            Text('Price: \$${product['price']}'),
-          ],
+        // 2. Thông tin sản phẩm (Dùng Expanded để chiếm phần không gian ở giữa)
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                product['title'],
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                maxLines: 2, // Tránh tên quá dài làm hỏng layout
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Price: \$${product['price']}',
+                style: const TextStyle(color: Colors.black87),
+              ),
+            ],
+          ),
         ),
 
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            //  ADD
-            ElevatedButton(
-              onPressed: () {
-                addToCart(product);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
+        // 3. Cột chứa các nút bấm
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () => addToCart(product),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  minimumSize: const Size(100, 35), // Giới hạn kích thước nút
+                ),
+                child: const Text("GIỎ", style: TextStyle(fontSize: 11)),
               ),
-              child: const Text("THÊM VÀO GIỎ"),
-            ),
-
-            const SizedBox(height: 10),
-
-            //  DETAIL
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProductDetailPage(
-                      product: product,
-                      cart: cart,
-                      addToCart: addToCart,
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetailPage(
+                        product: product,
+                        cart: cart,
+                        addToCart: addToCart,
+                      ),
                     ),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  minimumSize: const Size(100, 35),
+                ),
+                child: const Text("MUA HÀNG", style: TextStyle(fontSize: 11)),
               ),
-              child: const Text("   MUA HÀNG   "),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     ),
